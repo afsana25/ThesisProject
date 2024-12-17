@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salinity and Temperature Research Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Analyzing and Predicting Water Temperature Based on Salinity in the California Current</h1>
+        <p>An Investigation into the Relationship Between Salinity and Temperature</p>
+        <p>Afsana Mimi</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+            <li><a href="#references">References</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Introduction -->
+        <section id="introduction">
+            <h2>Introduction</h2>
+          
+                <p>
+                    The world's oceans are essential for regulating Earth's climate, supporting diverse ecosystems, and sustaining life. Among the 
+                    numerous physical and chemical properties of seawater, <strong>salinity</strong> (the concentration of dissolved salts) and 
+                    <strong>temperature</strong> play a fundamental role in determining ocean circulation, biological productivity, and heat exchange 
+                    between the ocean and atmosphere.
+                </p>
+            
+                <p>
+                    Salinity and temperature are two interconnected parameters that influence the density of seawater. The variations in density, 
+                    driven by changes in salinity and temperature, give rise to thermohaline circulation—a major component of the global ocean 
+                    conveyor belt. This circulation distributes heat, nutrients, and gases across the globe, regulating regional climates and marine habitats.
+                </p>
+            
+                <p>
+                    Understanding the relationship between salinity and temperature is particularly critical in studying oceanographic processes such as:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Climate Change:</strong> Rising global temperatures impact evaporation, precipitation, and freshwater input, 
+                        which in turn alter salinity patterns and ocean heat content.
+                    </li>
+                    <li>
+                        <strong>Marine Ecosystems:</strong> Salinity and temperature control the habitability of marine environments, influencing 
+                        the distribution and diversity of aquatic life.
+                    </li>
+                    <li>
+                        <strong>Ocean Currents:</strong> Variations in salinity and temperature drive the thermohaline circulation, impacting 
+                        surface and deep ocean currents that shape regional and global climates.
+                    </li>
+                </ul>
+            
+                <p>
+                    This research focuses on analyzing the relationship between salinity and temperature in oceanographic data collected from the 
+                    <strong>California Current System (CCS)</strong>. The CCS is one of the most dynamic and productive marine ecosystems, extending 
+                    along the western coast of North America. It is influenced by complex interactions between atmospheric conditions, ocean currents, 
+                    and freshwater inputs.
+                </p>
+            
+                <p>
+                    By combining statistical analysis and data visualization techniques, this project investigates how salinity and temperature 
+                    are correlated in the CCS. The study uses datasets from <em>CalCOFI</em> (California Cooperative Oceanic Fisheries Investigations), 
+                    a long-term oceanographic research program that provides high-quality measurements for ocean climate and marine biology research.
+                </p>
+            
+                <p>
+                    The insights derived from this analysis are expected to contribute to a better understanding of regional oceanographic processes, 
+                    provide baseline data for future climate studies, and support marine resource management efforts.
+                </p>
+         
+            
+        </section>
+
+        <!-- Methodology -->
+        <section id="methodology">
+            <h2>Methodology</h2>
+            <p>
+                The analysis involves two key datasets: 
+                <strong>bottle data</strong> containing salinity and temperature readings, and 
+                <strong>station metadata</strong> providing identifiers for each measurement point. 
+                The datasets are merged, cleaned, and validated for consistency before analysis.
+            </p>
+            <ul>
+                <li>Data Cleaning: Removal of invalid or missing values.</li>
+                <li>Data Merging: Combining datasets based on the common <code>Station</code> key.</li>
+                <li>Statistical Analysis: Calculating averages, correlation coefficients, and regression lines.</li>
+                <li>Visualizations: Scatter plots and histograms to illustrate findings.</li>
+            </ul>
+        </section>
+
+        <!-- Results -->
+        <section id="results">
+            <h2>Results and Discussion</h2>
+            <p>The following section provides statistical insights and visualizations:</p>
+            <ul>
+                <li><strong>Total Records:</strong> <span id="totalRecords">Loading...</span></li>
+                <li><strong>Average Salinity:</strong> <span id="avgSalinity">Loading...</span> PSU</li>
+                <li><strong>Average Temperature:</strong> <span id="avgTemperature">Loading...</span> °C</li>
+                <li><strong>Correlation Coefficient:</strong> <span id="correlation">Loading...</span></li>
+            </ul>
+
+            <!-- Merged Data Preview -->
+            <section id="dataPreview" style="background: #f9f9f9; border: 1px solid #ddd; padding: 10px; margin: 20px 0; border-radius: 5px;">
+                <h3>Preview of Merged Data</h3>
+                <p>Below is a preview of the first 5 rows from the merged dataset:</p>
+                <pre id="previewContainer">Loading...</pre>
+            </section>
+
+            <!-- Scatter Plot -->
+            <h3>Scatter Plot: Salinity vs Temperature</h3>
+            <p>
+                The scatter plot below illustrates the relationship between salinity and temperature. The regression line highlights 
+                the observed trend in the data.
+            </p>
+            <canvas id="scatterChart" width="800" height="400"></canvas>
+
+            <!-- Histograms -->
+            <h3>Distribution of Salinity</h3>
+            <canvas id="salinityHistogram" width="800" height="400"></canvas>
+
+            <h3>Distribution of Temperature</h3>
+            <canvas id="temperatureHistogram" width="800" height="400"></canvas>
+        </section>
+
+        <!-- Conclusion -->
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>
+                The analysis reveals a positive correlation between salinity and temperature, suggesting that changes in salinity 
+                may be used as predictors for temperature variations. These findings contribute to understanding oceanographic 
+                processes and their broader implications for climate studies.
+            </p>
+        </section>
+
+        <!-- References -->
+        <section id="references">
+            <h2>References</h2>
+            <ol>
+
+                <li>California Cooperative Oceanic Fisheries Investigations (CalCOFI). "Data Collection and Surveys." <em>CalCOFI</em>, www.calcofi.org. Accessed 20 June 2024.</li>
+                <li>Talley, Lynne D., et al. <em>Descriptive Physical Oceanography: An Introduction</em>. 6th ed., Academic Press, 2011.</li>
+                <li>Schmitt, Raymond W. "Salinity and the Global Water Cycle." <em>Oceanography</em>, vol. 21, no. 1, 2008, pp. 12-19.</li>
+                <li>Rahmstorf, Stefan. "Thermohaline Circulation: The Current Climate." <em>Nature</em>, vol. 421, no. 6924, 2003, pp. 699-704.</li>
+                <li>Stewart, Robert H. <em>Introduction to Physical Oceanography</em>. Texas A&M University Press, 2008.</li>
+                <li>Gill, Adrian E. <em>Atmosphere-Ocean Dynamics</em>. Academic Press, 1982.</li>
+                <li>NASA Earth Observatory. "Sea Surface Salinity and Climate Change." <em>NASA Earth Observatory</em>, 2017, earthobservatory.nasa.gov.</li>
+                <li>Pickard, George L., and William J. Emery. <em>Descriptive Physical Oceanography</em>. 5th ed., Pergamon Press, 1990.</li>
+                <li>Tomczak, Matthias, and J. Stuart Godfrey. <em>Regional Oceanography: An Introduction</em>. 2nd ed., Daya Publishing House, 2002.</li>
+                <li>IPCC. "The Ocean and Cryosphere in a Changing Climate." <em>Intergovernmental Panel on Climate Change</em>, Special Report, 2019.</li>
+           
+            </ol>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Afsana Mimi | A Capstone Project</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
