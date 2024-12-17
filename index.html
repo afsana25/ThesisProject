@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salinity and Temperature Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Salinity and Temperature Analysis</h1>
+        <p>Exploring the relationship between salinity and temperature using combined datasets</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#results">Results & Visualization</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <header>
+                <h1>Salinity and Temperature Analysis</h1>
+                <p>Exploring the relationship between salinity and temperature in the California Current System using oceanographic data.</p>
+            </header>
+        
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>The ocean is a dynamic system that plays a vital role in regulating the Earth’s climate and supporting marine biodiversity. Among the most critical parameters in understanding oceanographic processes are <strong>salinity</strong> and <strong>temperature</strong>. Salinity, the measure of dissolved salts in water, and temperature, which influences water density and circulation, are interdependent factors that shape the physical, chemical, and biological properties of marine environments.</p>
+        
+                <p>The California Current System (CCS), a prominent feature of the Pacific Ocean, is particularly significant for studying salinity-temperature dynamics. As part of a complex upwelling system, the CCS supports a diverse range of marine life and serves as an essential resource for fisheries, climate research, and ecosystem monitoring. Understanding the relationship between salinity and temperature in this region provides insights into ocean circulation patterns, climate variability, and the health of marine ecosystems.</p>
+            </section>
+        
+            <section id="research-context">
+                <h2>Research Context</h2>
+                <p>This study leverages data collected by the <strong>California Cooperative Oceanic Fisheries Investigations (CalCOFI)</strong>, one of the longest-running oceanographic surveys in the world. The datasets, consisting of parameters such as salinity, temperature, and station metadata, offer a wealth of information to explore long-term trends and variability in the CCS. By analyzing this data, the research aims to uncover how salinity correlates with temperature and how this relationship can be used to model and predict temperature changes.</p>
+            </section>
+        
+            <section id="research-problem">
+                <h2>Research Problem</h2>
+                <p>Despite decades of oceanographic research, the precise relationship between salinity and temperature remains challenging to model due to the influence of other environmental variables such as depth, currents, and climatic events like El Niño and La Niña. Identifying and quantifying this relationship is critical for:</p>
+                <ul>
+              
+        
+        
+                    <section id="methodology">
+                        <h2>Methodology</h2>
+                        <p>The methodology for this research is structured into several key stages, ensuring a systematic and reproducible approach to analyzing the relationship between salinity and temperature. The following steps outline the process:</p>
+                    
+                        <h3>1. Data Acquisition</h3>
+                        <p>The data used in this study was obtained from the <strong>California Cooperative Oceanic Fisheries Investigations (CalCOFI)</strong>, a long-term oceanographic survey. Two datasets were used:</p>
+                        <ul>
+                            <li><strong>bottle.csv</strong>: Contains measurements of salinity, temperature, and other oceanographic parameters at various depths and stations.</li>
+                            <li><strong>cast.csv</strong>: Provides metadata about the stations, including identifiers and contextual details such as date, time, and location.</li>
+                        </ul>
+                        <p>The datasets were downloaded in raw format and required significant cleaning to ensure consistency and usability.</p>
+                    
+                        <h3>2. Data Cleaning and Preprocessing</h3>
+                        <p>To prepare the datasets for analysis, the following steps were performed:</p>
+                        <ul>
+                            <li><strong>Column Selection:</strong> Retained relevant columns from <code>bottle.csv</code> (<code>Sta_ID</code>, <code>Salnty</code>, <code>T_degC</code>) and <code>cast.csv</code> (<code>Sta_ID</code>).</li>
+                            <li><strong>Column Renaming:</strong> Renamed columns for consistency:
+                                <ul>
+                                    <li><code>Sta_ID</code> → <code>Station</code></li>
+                                    <li><code>Salnty</code> → <code>Salinity</code></li>
+                                    <li><code>T_degC</code> → <code>Temperature</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Missing Data Handling:</strong> Removed rows with missing or invalid values in the relevant columns.</li>
+                            <li><strong>Data Type Conversion:</strong> Ensured that <code>Salinity</code> and <code>Temperature</code> columns contained only numeric values, removing any non-numeric entries.</li>
+                            <li><strong>Output:</strong> Saved the cleaned datasets as <code>cleaned_bottle.csv</code> and <code>cleaned_cast.csv</code>.</li>
+                        </ul>
+                    
+                        <h3>3. Data Merging</h3>
+                        <p>The cleaned datasets were merged using the <code>Station</code> column as the key. Only stations present in both datasets were included in the final merged dataset. This step ensured that the analysis focused on complete and consistent data.</p>
+                    
+                        <h3>4. Exploratory Data Analysis (EDA)</h3>
+                        <p>Before statistical modeling, the merged dataset was explored to understand its characteristics:</p>
+                        <ul>
+                            <li><strong>Descriptive Statistics:</strong> Calculated mean, median, and range for salinity and temperature.</li>
+                            <li><strong>Data Visualization:</strong> Created scatter plots to visualize the relationship between salinity and temperature.</li>
+                            <li><strong>Outlier Detection:</strong> Identified and flagged any extreme values that could skew the analysis.</li>
+                        </ul>
+                    
+                        <h3>5. Statistical Analysis</h3>
+                        <p>Statistical techniques were employed to quantify the relationship between salinity and temperature:</p>
+                        <ul>
+                            <li><strong>Correlation Coefficient:</strong> Computed Pearson’s correlation coefficient (\(r\)) to measure the strength and direction of the linear relationship.</li>
+                            <li><strong>Linear Regression:</strong> Developed a regression model to predict temperature (\(T\)) based on salinity (\(S\)):
+                                <pre><code>T = m * S + b</code></pre>
+                                where \(m\) is the slope and \(b\) is the intercept of the regression line.
+                            </li>
+                            <li><strong>Model Validation:</strong> Assessed model performance using metrics such as \(R^2\), Mean Absolute Error (MAE), and Mean Squared Error (MSE).</li>
+                        </ul>
+                    
+                        <h3>6. Data Visualization</h3>
+                        <p>Interactive visualizations were created to make the results more accessible:</p>
+                        <ul>
+                            <li><strong>Scatter Plot:</strong> Visualized salinity vs. temperature, overlaid with the regression line.</li>
+                            <li><strong>Histograms:</strong> Showed the distribution of salinity and temperature values.</li>
+                            <li><strong>Interactive Dashboard:</strong> Built a dynamic interface using JavaScript and Chart.js to allow users to explore the data.</li>
+                        </ul>
+                    
+                        <h3>7. Interpretation and Reporting</h3>
+                        <p>The results were interpreted in the context of oceanographic processes and their implications for climate science and marine ecosystems. Key findings were summarized, and potential future research directions were identified.</p>
+                    </section>
+                    
+
+                    <section id="results-visualization">
+                        <h2>Results and Visualization</h2>
+                        <p>This section presents the results of the analysis, including statistical insights, visualizations, and interpretations of the relationship between salinity and temperature. The findings are derived from the cleaned and merged datasets, leveraging both descriptive and inferential statistical methods.</p>
+                    
+                        <h3>1. Statistical Insights</h3>
+                        <ul>
+                            <li><strong>Total Records Analyzed:</strong> <span id="totalRecords">Loading...</span></li>
+                            <li><strong>Average Salinity:</strong> <span id="avgSalinity">Loading...</span> PSU</li>
+                            <li><strong>Average Temperature:</strong> <span id="avgTemperature">Loading...</span> °C</li>
+                            <li><strong>Regression Slope:</strong> <span id="slope">Loading...</span></li>
+                            <li><strong>Regression Intercept:</strong> <span id="intercept">Loading...</span></li>
+                            <li><strong>Correlation Coefficient:</strong> <span id="correlation">Loading...</span></li>
+                        </ul>
+                        <p>These metrics quantify the relationship between salinity and temperature. The correlation coefficient indicates the strength and direction of the relationship, while the regression parameters (slope and intercept) provide a predictive model for temperature based on salinity.</p>
+                    
+                        <h3>2. Scatter Plot: Salinity vs. Temperature</h3>
+                        <p>The scatter plot below visualizes the relationship between salinity and temperature. Each point represents a station, and the overlaid regression line shows the trend derived from the linear regression model:</p>
+                        <canvas id="scatterChart" width="800" height="400"></canvas>
+                    
+                        <h3>3. Histograms</h3>
+                        <p>The histograms below display the distributions of salinity and temperature values, providing insights into the range and frequency of observations:</p>
+                        <h4>Distribution of Salinity</h4>
+                        <canvas id="salinityHistogram" width="800" height="400"></canvas>
+                    
+                        <h4>Distribution of Temperature</h4>
+                        <canvas id="temperatureHistogram" width="800" height="400"></canvas>
+                    
+                        <h3>4. Key Observations</h3>
+                        <ul>
+                            <li>Salinity values range from <span id="salinityRange">Loading...</span>, with an average of <span id="avgSalinity">Loading...</span>.</li>
+                            <li>Temperature values range from <span id="temperatureRange">Loading...</span>, with an average of <span id="avgTemperature">Loading...</span>.</li>
+                            <li>The positive correlation coefficient (<span id="correlation">Loading...</span>) indicates that higher salinity is generally associated with higher temperatures.</li>
+                            <li>The regression model predicts temperature with the equation:
+                                <pre><code>T = m * S + b</code></pre>
+                                where \(m\) (<span id="slope">Loading...</span>) is the slope and \(b\) (<span id="intercept">Loading...</span>) is the intercept.
+                            </li>
+                        </ul>
+                    </section>
+                    
+    </main>
+    <footer>
+        <p>&copy; 2024 [Your Name]. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
