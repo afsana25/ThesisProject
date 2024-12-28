@@ -1,134 +1,175 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const scatterChartCtx = document.getElementById('scatterChart').getContext('2d');
-    const salinityHistogramCtx = document.getElementById('salinityHistogram').getContext('2d');
-    const temperatureHistogramCtx = document.getElementById('temperatureHistogram').getContext('2d');
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('cleaned_bottle.csv')
+        .then(response => response.text())
+        .then(csvData => {
+            const data = parseCSV(csvData);
+            const sampledData = getRandomSample(data, 3000); // Use random sample of 3000 records
+            const regression = calculateRegression(sampledData);
 
-    async function loadAndVisualizeResults() {
-        try {
-            const [bottleData, castData] = await Promise.all([
-                loadCSV('cleaned_bottle.csv'),
-                loadCSV('cleaned_cast.csv')
-            ]);
+            updateDataOverview(data);
+            updateDataSummary(sampledData); // Ensure calculations are performed here
+            updateStatistics(regression);
+            renderVisualizations(sampledData, regression);
+        })
+        .catch(error => console.error('Error loading data:', error));
 
-            // Merge datasets based on Station
-            const mergedData = mergeDatasets(bottleData, castData, 'Station');
-
-            if (mergedData.length === 0) {
-                alert('No valid data available for visualization.');
-                return;
-            }
-
-            // Calculate statistics
-            const stats = calculateStats(mergedData);
-
-            // Display stats and generate visuals
-            displayStats(stats);
-            createScatterChart(scatterChartCtx, mergedData);
-            createHistogram(salinityHistogramCtx, mergedData, 'Salinity', 'Distribution of Salinity');
-            createHistogram(temperatureHistogramCtx, mergedData, 'Temperature', 'Distribution of Temperature');
-        } catch (error) {
-            console.error('Error during visualization:', error);
-        }
-    }
-
-    async function loadCSV(filePath) {
-        const response = await fetch(filePath);
-        if (!response.ok) throw new Error(`Failed to fetch ${filePath}: ${response.statusText}`);
-        const text = await response.text();
-        return parseCSV(text);
-    }
-
+    // Parse CSV data
     function parseCSV(csvText) {
-        const rows = csvText.split('\n').map(row => row.split(',').map(col => col.trim()));
-        const headers = rows.shift(); // Extract headers
-        return rows
-            .filter(row => row.length === headers.length) // Remove incomplete rows
-            .map(row => Object.fromEntries(headers.map((h, i) => [h, row[i]])));
+        const [headers, ...rows] = csvText.trim().split('\n').map(row => row.split(','));
+        return rows.map(row => Object.fromEntries(headers.map((h, i) => [h.trim(), row[i].trim()])));
     }
 
-    function mergeDatasets(data1, data2, key) {
-        const data2Keys = new Set(data2.map(d => d[key]));
-        return data1.filter(d => data2Keys.has(d[key]));
+    // Randomly sample 3,000 records
+    function getRandomSample(data, size) {
+        return data.sort(() => 0.5 - Math.random()).slice(0, size);
     }
 
-    function calculateStats(data) {
-        const n = data.length;
-        const salinities = data.map(d => parseFloat(d.Salinity));
-        const temperatures = data.map(d => parseFloat(d.Temperature));
-
-        const avgSalinity = salinities.reduce((sum, v) => sum + v, 0) / n;
-        const avgTemperature = temperatures.reduce((sum, v) => sum + v, 0) / n;
-
-        const covariance = salinities.reduce((sum, s, i) =>
-            sum + (s - avgSalinity) * (temperatures[i] - avgTemperature), 0) / n;
-        const salinityVariance = salinities.reduce((sum, s) =>
-            sum + Math.pow(s - avgSalinity, 2), 0) / n;
-
-        const slope = covariance / salinityVariance;
-        const intercept = avgTemperature - slope * avgSalinity;
-        const correlation = covariance / Math.sqrt(salinityVariance);
-
-        return { n, avgSalinity, avgTemperature, slope, intercept, correlation };
+    // Update data overview
+    function updateDataOverview(data) {
+        const totalRecords = data.length;
+        const totalColumns = Object.keys(data[0]).length;
+        document.getElementById('totalRecords').textContent = totalRecords;
+        document.getElementById('totalColumns').textContent = totalColumns;
+        document.getElementById('samplingPeriod').textContent = 'Random 3000(n)';
     }
 
-    function displayStats(stats) {
-        document.getElementById('totalRecords').textContent = stats.n;
-        document.getElementById('avgSalinity').textContent = stats.avgSalinity.toFixed(2);
-        document.getElementById('avgTemperature').textContent = stats.avgTemperature.toFixed(2);
-        document.getElementById('slope').textContent = stats.slope.toFixed(2);
-        document.getElementById('intercept').textContent = stats.intercept.toFixed(2);
-        document.getElementById('correlation').textContent = stats.correlation.toFixed(2);
+    // Update data summary (Calculate Mean, Median, Min, Max)
+    function updateDataSummary(data) {
+        const salinity = data.map(d => parseFloat(d.Salinity)).filter(v => !isNaN(v));
+        const temperature = data.map(d => parseFloat(d.Temperature)).filter(v => !isNaN(v));
+
+        document.getElementById('salinityMean').textContent = computeMean(salinity).toFixed(2);
+        document.getElementById('salinityMedian').textContent = computeMedian(salinity).toFixed(2);
+        document.getElementById('salinityMin').textContent = Math.min(...salinity).toFixed(2);
+        document.getElementById('salinityMax').textContent = Math.max(...salinity).toFixed(2);
+
+        document.getElementById('temperatureMean').textContent = computeMean(temperature).toFixed(2);
+        document.getElementById('temperatureMedian').textContent = computeMedian(temperature).toFixed(2);
+        document.getElementById('temperatureMin').textContent = Math.min(...temperature).toFixed(2);
+        document.getElementById('temperatureMax').textContent = Math.max(...temperature).toFixed(2);
     }
 
-    function createScatterChart(ctx, data) {
+    // Update statistical analysis
+    function updateStatistics({ slope, intercept, correlation }) {
+        document.getElementById('correlation').textContent = correlation.toFixed(2);
+        document.getElementById('regression').textContent = `y = ${slope.toFixed(2)}x + ${intercept.toFixed(2)}`;
+    }
+
+    // Compute mean
+    function computeMean(values) {
+        const sum = values.reduce((a, b) => a + b, 0);
+        return sum / values.length;
+    }
+
+    // Compute median
+    function computeMedian(values) {
+        const sorted = [...values].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 !== 0
+            ? sorted[mid]
+            : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    // Render visualizations
+    function renderVisualizations(data, regression) {
+        const scatterData = data.map(d => ({
+            x: parseFloat(d.Salinity),
+            y: parseFloat(d.Temperature),
+        }));
+
+        createScatterChart(scatterData, regression);
+        createHistogram('salinityHistogram', data.map(d => parseFloat(d.Salinity)), 'Salinity');
+        createHistogram('temperatureHistogram', data.map(d => parseFloat(d.Temperature)), 'Temperature');
+    }
+
+    // Chart.js: Create Scatter Plot with Regression Line
+    function createScatterChart(data, regression) {
+        const ctx = document.getElementById('scatterChart').getContext('2d');
         new Chart(ctx, {
             type: 'scatter',
             data: {
-                datasets: [{
-                    label: 'Salinity vs Temperature',
-                    data: data.map(d => ({
-                        x: parseFloat(d.Salinity),
-                        y: parseFloat(d.Temperature),
-                    })),
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                }]
+                datasets: [
+                    {
+                        label: 'Salinity vs Temperature',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    },
+                    {
+                        label: `Regression Line: y = ${regression.slope.toFixed(2)}x + ${regression.intercept.toFixed(2)}`,
+                        data: regression.line,
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 0.7)',
+                        borderWidth: 2,
+                        fill: false,
+                    },
+                ],
             },
             options: {
                 scales: {
                     x: { title: { display: true, text: 'Salinity (PSU)' } },
                     y: { title: { display: true, text: 'Temperature (°C)' } },
-                }
-            }
+                },
+            },
         });
     }
 
-    function createHistogram(ctx, data, field, title) {
-        const values = data.map(d => parseFloat(d[field])).filter(val => !isNaN(val));
+    // Chart.js: Create Histogram
+    function createHistogram(canvasId, values, label) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
         const bins = Array.from(new Set(values)).sort((a, b) => a - b);
-
-        const frequencies = bins.map(bin =>
-            values.filter(val => val === bin).length
-        );
+        const frequencies = bins.map(bin => values.filter(v => v === bin).length);
 
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: bins,
                 datasets: [{
-                    label: title,
+                    label: `${label} Distribution`,
                     data: frequencies,
                     backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                }]
+                }],
             },
             options: {
                 scales: {
-                    x: { title: { display: true, text: field } },
+                    x: { title: { display: true, text: label } },
                     y: { title: { display: true, text: 'Frequency' } },
                 },
-                plugins: { title: { display: true, text: title } },
-            }
+            },
         });
     }
 
-    loadAndVisualizeResults();
+    // Calculate regression line and correlation
+    function calculateRegression(data) {
+        const validData = data.map(d => ({
+            x: parseFloat(d.Salinity),
+            y: parseFloat(d.Temperature),
+        })).filter(d => !isNaN(d.x) && !isNaN(d.y));
+
+        const n = validData.length;
+        const sumX = validData.reduce((acc, val) => acc + val.x, 0);
+        const sumY = validData.reduce((acc, val) => acc + val.y, 0);
+        const sumXY = validData.reduce((acc, val) => acc + val.x * val.y, 0);
+        const sumX2 = validData.reduce((acc, val) => acc + val.x ** 2, 0);
+        const sumY2 = validData.reduce((acc, val) => acc + val.y ** 2, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX ** 2);
+        const intercept = (sumY - slope * sumX) / n;
+
+        const rNumerator = (n * sumXY - sumX * sumY);
+        const rDenominator = Math.sqrt((n * sumX2 - sumX ** 2) * (n * sumY2 - sumY ** 2));
+        const correlation = rNumerator / rDenominator;
+
+        const xMin = Math.min(...validData.map(d => d.x));
+        const xMax = Math.max(...validData.map(d => d.x));
+
+        return {
+            slope,
+            intercept,
+            correlation,
+            line: [
+                { x: xMin, y: slope * xMin + intercept },
+                { x: xMax, y: slope * xMax + intercept },
+            ],
+        };
+    }
 });
